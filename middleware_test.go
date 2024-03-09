@@ -21,12 +21,12 @@ func TestMiddleware(t *testing.T) {
 	require.NoError(t, err)
 
 	handlerA := func(w http.ResponseWriter, r *http.Request) {
-		message := i18n.TCtx(r.Context(), "message.test")
+		message := i18n.TCtx(r.Context(), "test")
 		_, _ = w.Write([]byte(message))
 	}
 	handlerB := func(w http.ResponseWriter, r *http.Request) {
 		name := r.URL.Query().Get("name")
-		message := i18n.TCtx(r.Context(), "message.hello", i18n.Param("name", name))
+		message := i18n.TCtx(r.Context(), "hello", i18n.Param("name", name))
 		_, _ = w.Write([]byte(message))
 	}
 

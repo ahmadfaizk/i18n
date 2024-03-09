@@ -32,43 +32,43 @@ func TestI18n(t *testing.T) {
 	}{
 		{
 			name:            "default",
-			messageID:       "message.test",
+			messageID:       "test",
 			expectedMessage: "This is test message",
 		},
 		{
 			name:            "with custom language",
-			messageID:       "message.test",
+			messageID:       "test",
 			options:         []i18n.LocalizeOption{i18n.Lang("id")},
 			expectedMessage: "Ini adalah pesan tes",
 		},
 		{
 			name:            "with param",
-			messageID:       "message.hello",
+			messageID:       "hello",
 			options:         []i18n.LocalizeOption{i18n.Param("name", "John")},
 			expectedMessage: "Hello, John!",
 		},
 		{
 			name:            "with params",
-			messageID:       "message.with_params",
-			options:         []i18n.LocalizeOption{i18n.Params(i18n.M{"param1": "hello", "param2": 123})},
-			expectedMessage: "This is message with params: hello and 123",
+			messageID:       "hello_age",
+			options:         []i18n.LocalizeOption{i18n.Params(i18n.M{"name": "John", "age": 30})},
+			expectedMessage: "Hello, John! You are 30 years old.",
 		},
 		{
 			name:            "with default message",
-			messageID:       "test.with_default_message",
-			options:         []i18n.LocalizeOption{i18n.DefaultMessage("This is default message")},
+			messageID:       "with_default_message",
+			options:         []i18n.LocalizeOption{i18n.Default("This is default message")},
 			expectedMessage: "This is default message",
 		},
 		{
 			name:            "not found and use default language",
-			messageID:       "message.hello_world",
+			messageID:       "hello_world",
 			options:         []i18n.LocalizeOption{i18n.Lang("id")},
 			expectedMessage: "Hello, World!",
 		},
 		{
 			name:            "not found",
-			messageID:       "test.not_found",
-			expectedMessage: "test.not_found",
+			messageID:       "not_found",
+			expectedMessage: "not_found",
 		},
 	}
 
@@ -96,44 +96,44 @@ func TestI18nCtx(t *testing.T) {
 	}{
 		{
 			name:            "default",
-			messageID:       "message.test",
+			messageID:       "test",
 			expectedMessage: "This is test message",
 		},
 		{
 			name:            "with param",
-			messageID:       "message.hello",
+			messageID:       "hello",
 			options:         []i18n.LocalizeOption{i18n.Param("name", "John")},
 			expectedMessage: "Hello, John!",
 		},
 		{
 			name:            "with params",
-			messageID:       "message.with_params",
-			options:         []i18n.LocalizeOption{i18n.Params(i18n.M{"param1": "hello", "param2": 123})},
-			expectedMessage: "This is message with params: hello and 123",
+			messageID:       "hello_age",
+			options:         []i18n.LocalizeOption{i18n.Params(i18n.M{"name": "John", "age": 30})},
+			expectedMessage: "Hello, John! You are 30 years old.",
 		},
 		{
 			name:            "with default message",
-			messageID:       "test.with_default_message",
-			options:         []i18n.LocalizeOption{i18n.DefaultMessage("This is default message")},
+			messageID:       "with_default_message",
+			options:         []i18n.LocalizeOption{i18n.Default("This is default message")},
 			expectedMessage: "This is default message",
 		},
 		{
 			name:            "with custom language",
-			messageID:       "message.test",
+			messageID:       "test",
 			language:        "id",
 			expectedMessage: "Ini adalah pesan tes",
 		},
 		{
 			name:            "not found and use default language",
-			messageID:       "message.hello_world",
+			messageID:       "hello_world",
 			language:        "id",
 			options:         []i18n.LocalizeOption{i18n.Lang("es")},
 			expectedMessage: "Hello, World!",
 		},
 		{
 			name:            "not found",
-			messageID:       "test.not_found",
-			expectedMessage: "test.not_found",
+			messageID:       "not_found",
+			expectedMessage: "not_found",
 		},
 	}
 
@@ -150,7 +150,7 @@ func TestI18nCtx(t *testing.T) {
 }
 
 func TestI18nWhenTranslationNotFound(t *testing.T) {
-	err := i18n.Init(language.English, i18n.WithTranslationFile("testdate/es.yaml"))
+	err := i18n.Init(language.English, i18n.WithTranslationFile("testdata/es.yaml"))
 	assert.Error(t, err)
 
 	err = i18n.Init(language.English, i18n.WithTranslationFSFile(testdata.FS, "es.yaml"))

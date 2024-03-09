@@ -87,7 +87,8 @@ func Get(id string, opts ...LocalizeOption) string {
 
 // GetCtx returns the translated message for the given message id.
 //
-// It uses the language from the context. You can set the language to the context with i18n.Middleware. If the language is not found in the context, it uses the default language tag.
+// It uses the language from the context. You can set the language to the context with i18n.Middleware.
+// If the language is not found in the context, it uses the default language tag.
 //
 // Example:
 //

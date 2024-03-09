@@ -1,4 +1,3 @@
-message:
-  test: "Ini adalah pesan tes"
-  with_params: "Ini adalah pesan dengan parameter: {{.param1}} dan {{.param2}}"
-  hello: "Halo {{.name}}"
+test: "Ini adalah pesan tes"
+hello: "Halo {{.name}}"
+hello_age: "Halo {{.name}}! Kamu berumur {{.age}} tahun."

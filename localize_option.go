@@ -73,14 +73,14 @@ func Lang(language string) LocalizeOption {
 	}
 }
 
-// DefaultMessage sets the default message for the message.
+// Default sets the default message for the message.
 //
 // It is used when the message is not found.
 //
 // Example:
 //
-//	i18n.T("hello", i18n.DefaultMessage("Hello, {{.name}}!"), i18n.Param("name", "John")))
-func DefaultMessage(defaultMessage string) LocalizeOption {
+//	i18n.T("hello", i18n.Default("Hello, {{.name}}!"), i18n.Param("name", "John")))
+func Default(defaultMessage string) LocalizeOption {
 	return func(c *localizeConfig) {
 		c.defaultMessage = defaultMessage
 	}
