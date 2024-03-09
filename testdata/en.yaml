@@ -1,0 +1,5 @@
+message:
+  test: "This is test message"
+  with_params: "This is message with params: {{.param1}} and {{.param2}}"
+  hello: "Hello, {{.name}}!"
+  hello_world: "Hello, World!"
