@@ -1,6 +1,7 @@
 package i18n
 
 import (
+	"context"
 	"embed"
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -15,6 +16,7 @@ type config struct {
 	unmarshalFuncMap          map[string]i18n.UnmarshalFunc
 	translationFiles          []string
 	translationFSFiles        []translationFSFile
+	extractLanguageFunc       func(ctx context.Context) string
 	missingTranslationHandler func(id string, err error) string
 }
 
@@ -62,5 +64,14 @@ func WithTranslationFSFile(fs embed.FS, paths ...string) Option {
 func WithMissingTranslationHandler(missingTranslationHandler func(id string, err error) string) Option {
 	return func(c *config) {
 		c.missingTranslationHandler = missingTranslationHandler
+	}
+}
+
+// WithExtractLanguageFunc sets the language extract function for the middleware.
+//
+// It is used to extract the language from the context.
+func WithExtractLanguageFunc(extractLanguageFunc func(ctx context.Context) string) Option {
+	return func(c *config) {
+		c.extractLanguageFunc = extractLanguageFunc
 	}
 }

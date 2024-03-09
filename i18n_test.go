@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/ahmadfaizk/i18n"
+	"github.com/ahmadfaizk/i18n/testdata"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/text/language"
@@ -49,7 +50,7 @@ func TestI18n(t *testing.T) {
 		{
 			name:            "with params",
 			messageID:       "message.with_params",
-			options:         []i18n.LocalizeOption{i18n.Params(i18n.Map{"param1": "hello", "param2": 123})},
+			options:         []i18n.LocalizeOption{i18n.Params(i18n.M{"param1": "hello", "param2": 123})},
 			expectedMessage: "This is message with params: hello and 123",
 		},
 		{
@@ -82,7 +83,7 @@ func TestI18n(t *testing.T) {
 func TestI18nCtx(t *testing.T) {
 	err := i18n.Init(language.English,
 		i18n.WithUnmarshalFunc("yaml", yaml.Unmarshal),
-		i18n.WithTranslationFile("testdata/en.yaml", "testdata/id.yaml"),
+		i18n.WithTranslationFSFile(testdata.FS, "en.yaml", "id.yaml"),
 	)
 	require.NoError(t, err)
 
@@ -107,7 +108,7 @@ func TestI18nCtx(t *testing.T) {
 		{
 			name:            "with params",
 			messageID:       "message.with_params",
-			options:         []i18n.LocalizeOption{i18n.Params(i18n.Map{"param1": "hello", "param2": 123})},
+			options:         []i18n.LocalizeOption{i18n.Params(i18n.M{"param1": "hello", "param2": 123})},
 			expectedMessage: "This is message with params: hello and 123",
 		},
 		{
@@ -140,10 +141,18 @@ func TestI18nCtx(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx := context.Background()
 			if tc.language != "" {
-				ctx = i18n.SetLanguageToContext(ctx, tc.language)
+				ctx = i18n.NewContextWithLanguage(ctx, tc.language)
 			}
 			message := i18n.TCtx(ctx, tc.messageID, tc.options...)
 			assert.Equal(t, tc.expectedMessage, message)
 		})
 	}
+}
+
+func TestI18nWhenTranslationNotFound(t *testing.T) {
+	err := i18n.Init(language.English, i18n.WithTranslationFile("testdate/es.yaml"))
+	assert.Error(t, err)
+
+	err = i18n.Init(language.English, i18n.WithTranslationFSFile(testdata.FS, "es.yaml"))
+	assert.Error(t, err)
 }

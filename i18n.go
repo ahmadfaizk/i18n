@@ -12,9 +12,18 @@ var (
 	bundle                    *i18n.Bundle
 	defaultLanguage           language.Tag
 	missingTranslationHandler func(string, error) string
+	extractLanguageFunc       func(context.Context) string
 
 	ErrI18nNotInitialized = errors.New("i18n is not initialized")
 )
+
+func defaultExtractLanguageFunc(ctx context.Context) string {
+	lang, ok := ctx.Value(languageCtxKey).(string)
+	if ok {
+		return lang
+	}
+	return ""
+}
 
 func defaultMissingTranslationFunc(messageID string, _ error) string {
 	return messageID
@@ -31,13 +40,16 @@ func defaultMissingTranslationFunc(messageID string, _ error) string {
 //		panic(err)
 //	}
 func Init(language language.Tag, opts ...Option) error {
-	defaultLanguage = language
 	defaultOpts := []Option{
 		WithMissingTranslationHandler(defaultMissingTranslationFunc),
+		WithExtractLanguageFunc(defaultExtractLanguageFunc),
 	}
 	opts = append(defaultOpts, opts...)
 	config := newI18nConfig(opts...)
+
+	defaultLanguage = language
 	missingTranslationHandler = config.missingTranslationHandler
+	extractLanguageFunc = config.extractLanguageFunc
 
 	bundle = i18n.NewBundle(language)
 	for format, unmarshalFunc := range config.unmarshalFuncMap {
@@ -92,8 +104,8 @@ func GetCtx(ctx context.Context, id string, opts ...LocalizeOption) string {
 	if cfg.language != "" {
 		languages = append(languages, cfg.language)
 	}
-	lang, ok := ctx.Value(languageCtxKey).(string)
-	if ok && !contains(languages, lang) {
+	lang := extractLanguageFunc(ctx)
+	if lang != "" && !contains(languages, lang) {
 		languages = append(languages, lang)
 	}
 	if !contains(languages, defaultLanguage.String()) {

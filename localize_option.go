@@ -2,18 +2,18 @@ package i18n
 
 import "github.com/nicksnyder/go-i18n/v2/i18n"
 
-// Map is a map of string to interface. It is used to pass template data to the message.
-type Map map[string]interface{}
+// M is an alias for map[string]interface{}. It is used to set template data for the message.
+type M map[string]interface{}
 
 type localizeConfig struct {
-	params         Map
+	params         map[string]interface{}
 	defaultMessage string
 	language       string
 }
 
 func newLocalizeConfig(opts ...LocalizeOption) *localizeConfig {
 	c := &localizeConfig{
-		params: make(Map),
+		params: make(map[string]interface{}),
 	}
 	for _, opt := range opts {
 		opt(c)
@@ -42,7 +42,7 @@ type LocalizeOption func(*localizeConfig)
 //
 // Example:
 //
-//	i18n.T("hello", i18n.Params(i18n.Map{"name": "John"}))
+//	i18n.T("hello", i18n.Params(i18n.M{"name": "John", "age": 30}))
 func Params(params map[string]interface{}) LocalizeOption {
 	return func(c *localizeConfig) {
 		for k, v := range params {
@@ -51,7 +51,7 @@ func Params(params map[string]interface{}) LocalizeOption {
 	}
 }
 
-// Param sets template data for the message.
+// Param set single value of template data for the message.
 //
 // Example:
 //

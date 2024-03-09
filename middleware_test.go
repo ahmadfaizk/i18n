@@ -29,7 +29,6 @@ func TestMiddleware(t *testing.T) {
 		message := i18n.TCtx(r.Context(), "message.hello", i18n.Param("name", name))
 		_, _ = w.Write([]byte(message))
 	}
-	i18nMiddleware := i18n.Middleware()
 
 	testCases := []struct {
 		name            string
@@ -102,13 +101,16 @@ func TestMiddleware(t *testing.T) {
 				req.Header.Set("Accept-Language", tc.lang)
 			}
 
-			i18nMiddleware(tc.handler).ServeHTTP(rec, req)
+			i18n.Middleware(tc.handler).ServeHTTP(rec, req)
 			assert.Equal(t, tc.expectedMessage, rec.Body.String())
 		})
 	}
 }
 
 func TestGetLanguage(t *testing.T) {
+	err := i18n.Init(language.English)
+	require.NoError(t, err)
+
 	testCases := []struct {
 		name string
 		lang string
@@ -116,7 +118,7 @@ func TestGetLanguage(t *testing.T) {
 	}{
 		{
 			name: "blank",
-			tag:  language.Und,
+			tag:  language.English,
 		},
 		{
 			name: "english language",
@@ -136,7 +138,7 @@ func TestGetLanguage(t *testing.T) {
 		{
 			name: "invalid language",
 			lang: "invalid",
-			tag:  language.Und,
+			tag:  language.English,
 		},
 	}
 
@@ -144,7 +146,7 @@ func TestGetLanguage(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			ctx := context.Background()
 			if tc.lang != "" {
-				ctx = i18n.SetLanguageToContext(ctx, tc.lang)
+				ctx = i18n.NewContextWithLanguage(ctx, tc.lang)
 			}
 			tag := i18n.GetLanguage(ctx)
 			assert.Equal(t, tc.tag, tag)
