@@ -8,6 +8,12 @@ This library is wrapper for [go-i18n](https://github.com/nicksnyder/go-i18n) wit
 go get -u github.com/ahmadfaizk/i18n
 ```
 
+## Features
+- [x] Translation
+- [x] Context Translation
+- [x] Parametrized Translation
+- [x] Missing Translation Fallback
+
 ## Usage
 
 ### Create Translation File
@@ -86,3 +92,6 @@ func main() {
     }
 }
 ```
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
