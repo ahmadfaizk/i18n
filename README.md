@@ -3,6 +3,14 @@ i18n is a simple internationalization library for Golang.
 It provides a way to translate strings into multiple languages.
 This library is wrapper for [go-i18n](https://github.com/nicksnyder/go-i18n) with some additional features.
 
+## Table of Contents
+- [Installation](#installation)
+- [Features](#features)
+- [Usage](#usage)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Installation
 ```bash
 go get -u github.com/ahmadfaizk/i18n
@@ -20,14 +28,14 @@ go get -u github.com/ahmadfaizk/i18n
 
 ### Create Translation File
 ```yaml
-# locale/en.yaml
+# locales/en.yaml
 hello: Hello
 hello_name: Hello, {{.name}}
 hello_name_age: Hello, {{.name}}. You are {{.age}} years old
 ```
 
 ```yaml
-# locale/id.yaml
+# locales/id.yaml
 hello: Halo
 hello_name: Halo, {{.name}}
 hello_name_age: Halo, {{.name}}. Kamu berumur {{.age}} tahun
@@ -43,7 +51,7 @@ import (
 
 i18n.Init(language.English,
     i18n.WithUnmarshalFunc("yaml", yaml.Unmarshal),
-    i18n.WithTranslationFile("locale/en.yaml", "locale/id.yaml"),
+    i18n.WithTranslationFile("locales/en.yaml", "locales/id.yaml"),
 )
 ```
 
@@ -57,20 +65,20 @@ fmt.Println(i18n.T("hello_name", i18n.Param("name", "John")))
 // Hello, John
 fmt.Println(i18n.T("hello_name", i18n.Lang("id"), i18n.Param("name", "John")))
 // Halo, John
-fmt.Println(i18n.T("hello_name_age", i18n.Params(i18n.M{"name": "John", "age": 20})))
+fmt.Println(i18n.T("hello_name_age", i18n.Params{"name": "John", "age": 20}))
 // Hello, John. You are 20 years old
-fmt.Println(i18n.T("hello_name_age", i18n.Lang("id"), i18n.Params(i18n.M{"name": "John", "age": 20})))
+fmt.Println(i18n.T("hello_name_age", i18n.Lang("id"), i18n.Params{"name": "John", "age": 20}))
 // Halo, John. Kamu berumur 20 tahun
 ```
 
-## Examples with Chi
-
+## Examples
+See [examples/](https://github.com/ahmadfaizk/i18n/blob/main/examples/) for a variety of examples.
 ```go
 package main
 
 import (
 	"github.com/ahmadfaizk/i18n"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"golang.org/x/text/language"
 	"gopkg.in/yaml.v3"
 	"net/http"
@@ -79,7 +87,7 @@ import (
 func main() {
 	if err := i18n.Init(language.English,
 		i18n.WithUnmarshalFunc("yaml", yaml.Unmarshal),
-		i18n.WithTranslationFile("locale/en.yaml", "locale/id.yaml"),
+		i18n.WithTranslationFile("locales/en.yaml", "locales/id.yaml"),
 	); err != nil {
 		panic(err)
 	}
@@ -87,21 +95,25 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(i18n.Middleware)
 	r.Get("/hello", func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
-		message := i18n.TCtx(ctx, "hello")
+		message := i18n.TCtx(r.Context(), "hello")
 		_, _ = w.Write([]byte(message))
 	})
 	r.Get("/hello/{name}", func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
 		name := chi.URLParam(r, "name")
-		message := i18n.TCtx(ctx, "hello_name", i18n.Param("name", name))
+		message := i18n.TCtx(r.Context(), "hello_name", i18n.Params{"name": name})
 		_, _ = w.Write([]byte(message))
 	})
 
-	if err := http.ListenAndServe(":8080", r); err != nil {
+	if err := http.ListenAndServe(":3000", r); err != nil {
 		panic(err)
 	}
 }
+```
+```bash
+curl http://localhost:3000/hello # Hello
+curl http://localhost:3000/hello/John # Hello, John
+curl -H "Accept-Language: id" http://localhost:3000/hello # Halo
+curl -H "Accept-Language: id" http://localhost:3000/hello/John # Halo, John
 ```
 
 ## Contributing

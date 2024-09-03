@@ -27,7 +27,7 @@ func TestI18n(t *testing.T) {
 	testCases := []struct {
 		name            string
 		messageID       string
-		options         []i18n.LocalizeOption
+		options         []any
 		expectedMessage string
 	}{
 		{
@@ -38,32 +38,32 @@ func TestI18n(t *testing.T) {
 		{
 			name:            "with custom language",
 			messageID:       "test",
-			options:         []i18n.LocalizeOption{i18n.Lang("id")},
+			options:         []any{i18n.Lang("id")},
 			expectedMessage: "Ini adalah pesan tes",
 		},
 		{
 			name:            "with param",
 			messageID:       "hello",
-			options:         []i18n.LocalizeOption{i18n.Param("name", "John")},
+			options:         []any{i18n.Param("name", "John")},
 			expectedMessage: "Hello, John!",
 		},
 		{
 			name:            "with params",
 			messageID:       "hello_age",
-			options:         []i18n.LocalizeOption{i18n.Params(i18n.M{"name": "John", "age": 30})},
+			options:         []any{i18n.Params{"name": "John", "age": 30}},
 			expectedMessage: "Hello, John! You are 30 years old.",
 		},
 		{
 			name:            "with default message",
 			messageID:       "with_default_message",
-			options:         []i18n.LocalizeOption{i18n.Default("This is default message")},
+			options:         []any{i18n.Default("This is default message")},
 			expectedMessage: "This is default message",
 		},
 		{
 			name:            "not found and use default language",
-			messageID:       "hello_world",
-			options:         []i18n.LocalizeOption{i18n.Lang("id")},
-			expectedMessage: "Hello, World!",
+			messageID:       "only_in_en",
+			options:         []any{i18n.Lang("id")},
+			expectedMessage: "This message is only available in English.",
 		},
 		{
 			name:            "not found",
@@ -90,7 +90,7 @@ func TestI18nCtx(t *testing.T) {
 	testCases := []struct {
 		name            string
 		messageID       string
-		options         []i18n.LocalizeOption
+		options         []any
 		expectedMessage string
 		language        string
 	}{
@@ -102,19 +102,19 @@ func TestI18nCtx(t *testing.T) {
 		{
 			name:            "with param",
 			messageID:       "hello",
-			options:         []i18n.LocalizeOption{i18n.Param("name", "John")},
+			options:         []any{i18n.Param("name", "John")},
 			expectedMessage: "Hello, John!",
 		},
 		{
 			name:            "with params",
 			messageID:       "hello_age",
-			options:         []i18n.LocalizeOption{i18n.Params(i18n.M{"name": "John", "age": 30})},
+			options:         []any{i18n.Params{"name": "John", "age": 30}},
 			expectedMessage: "Hello, John! You are 30 years old.",
 		},
 		{
 			name:            "with default message",
 			messageID:       "with_default_message",
-			options:         []i18n.LocalizeOption{i18n.Default("This is default message")},
+			options:         []any{i18n.Default("This is default message")},
 			expectedMessage: "This is default message",
 		},
 		{
@@ -125,10 +125,10 @@ func TestI18nCtx(t *testing.T) {
 		},
 		{
 			name:            "not found and use default language",
-			messageID:       "hello_world",
+			messageID:       "only_in_en",
 			language:        "id",
-			options:         []i18n.LocalizeOption{i18n.Lang("es")},
-			expectedMessage: "Hello, World!",
+			options:         []any{i18n.Lang("es")},
+			expectedMessage: "This message is only available in English.",
 		},
 		{
 			name:            "not found",

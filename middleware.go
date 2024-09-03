@@ -2,6 +2,7 @@ package i18n
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"golang.org/x/text/language"
@@ -18,6 +19,7 @@ func Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		lang := r.Header.Get("Accept-Language")
 		if lang != "" {
+			fmt.Println("lang", lang)
 			ctx := NewContextWithLanguage(r.Context(), lang)
 			r = r.WithContext(ctx)
 		}

@@ -1,9 +1,16 @@
 package i18n
 
-import "github.com/nicksnyder/go-i18n/v2/i18n"
+import (
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"reflect"
+)
 
-// M is an alias for map[string]interface{}. It is used to set template data for the message.
-type M map[string]interface{}
+// Params is an alias for map[string]interface{}. It is used to set template data for the message.
+//
+// Example:
+//
+//	i18n.T("hello", i18n.Params{"name": "John", "age": 30})
+type Params map[string]interface{}
 
 type localizeConfig struct {
 	params         map[string]interface{}
@@ -11,12 +18,19 @@ type localizeConfig struct {
 	language       string
 }
 
-func newLocalizeConfig(opts ...LocalizeOption) *localizeConfig {
+func newLocalizeConfig(opts ...any) *localizeConfig {
 	c := &localizeConfig{
 		params: make(map[string]interface{}),
 	}
 	for _, opt := range opts {
-		opt(c)
+		reflectValue := reflect.ValueOf(opt)
+		if reflectValue.Kind() == reflect.Map {
+			for _, key := range reflectValue.MapKeys() {
+				c.params[key.String()] = reflectValue.MapIndex(key).Interface()
+			}
+		} else if reflectValue.Kind() == reflect.Func {
+			reflectValue.Call([]reflect.Value{reflect.ValueOf(c)})
+		}
 	}
 	return c
 }
@@ -38,17 +52,8 @@ func (c localizeConfig) toI18nLocalizeConfig(id string) *i18n.LocalizeConfig {
 // LocalizeOption is a function that configures the localizeConfig.
 type LocalizeOption func(*localizeConfig)
 
-// Params sets template data for the message.
-//
-// Example:
-//
-//	i18n.T("hello", i18n.Params(i18n.M{"name": "John", "age": 30}))
-func Params(params map[string]interface{}) LocalizeOption {
-	return func(c *localizeConfig) {
-		for k, v := range params {
-			c.params[k] = v
-		}
-	}
+type LOption interface {
+	map[string]interface{} | LocalizeOption
 }
 
 // Param set single value of template data for the message.

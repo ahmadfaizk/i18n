@@ -35,7 +35,7 @@ func defaultMissingTranslationFunc(messageID string, _ error) string {
 //
 //	if err := i18n.Init(language.English,
 //		i18n.WithUnmarshalFunc("yaml", yaml.Unmarshal),
-//		i18n.WithMessageFilePaths("localization/en.yaml", "localization/id.yaml"),
+//		i18n.WithMessageFilePaths("locales/en.yaml", "locales/id.yaml"),
 //	) err != nil {
 //		panic(err)
 //	}
@@ -80,8 +80,8 @@ func Init(language language.Tag, opts ...Option) error {
 //
 // Example:
 //
-//	message := i18n.Get("hello", i18n.Param("name", "John"))
-func Get(id string, opts ...LocalizeOption) string {
+//	message := i18n.Get("hello", i18n.Params{"name": "John"})
+func Get(id string, opts ...any) string {
 	return GetCtx(context.Background(), id, opts...)
 }
 
@@ -92,8 +92,8 @@ func Get(id string, opts ...LocalizeOption) string {
 //
 // Example:
 //
-//	message := i18n.GetCtx(ctx, "hello", i18n.Param("name", "John"))
-func GetCtx(ctx context.Context, id string, opts ...LocalizeOption) string {
+//	message := i18n.GetCtx(ctx, "hello", i18n.Params{"name": "John"})
+func GetCtx(ctx context.Context, id string, opts ...any) string {
 	if bundle == nil {
 		panic(ErrI18nNotInitialized)
 	}
@@ -127,8 +127,8 @@ func GetCtx(ctx context.Context, id string, opts ...LocalizeOption) string {
 //
 // Example:
 //
-//	message := i18n.T("hello", i18n.Param("name", "John"))
-func T(id string, opts ...LocalizeOption) string {
+//	message := i18n.T("hello", i18n.Params{"name": "John"})
+func T(id string, opts ...any) string {
 	return Get(id, opts...)
 }
 
@@ -136,7 +136,7 @@ func T(id string, opts ...LocalizeOption) string {
 //
 // Example:
 //
-//	message := i18n.TCtx(ctx, "hello", i18n.Param("name", "John"))
-func TCtx(ctx context.Context, id string, opts ...LocalizeOption) string {
+//	message := i18n.TCtx(ctx, "hello", i18n.Params{"name": "John"})
+func TCtx(ctx context.Context, id string, opts ...any) string {
 	return GetCtx(ctx, id, opts...)
 }
